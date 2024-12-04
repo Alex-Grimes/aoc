@@ -9,8 +9,13 @@ pub fn part_one(input: &str) -> Option<usize> {
     Some(out)
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
-    None
+pub fn part_two(input: &str) -> Option<usize> {
+    let parsed = parse_input(input);
+    let out = parsed
+        .into_iter()
+        .filter(|levels| problem_dampener(levels))
+        .count();
+    Some(out)
 }
 
 fn parse_line(line: &str) -> Vec<u8> {
@@ -45,6 +50,23 @@ fn level_check(levels: &[u8]) -> bool {
 
 fn safe_levels(levels: &[u8]) -> bool {
     larger_or_smaller(levels) && level_check(levels)
+}
+
+fn problem_dampener(levels: &[u8]) -> bool {
+    let original = safe_levels(levels);
+
+    if original {
+        return true;
+    }
+
+    for i in 0..levels.len() {
+        let mut clone = levels.to_vec();
+        clone.remove(i);
+        if safe_levels(&clone) {
+            return true;
+        }
+    }
+    false
 }
 
 #[cfg(test)]
